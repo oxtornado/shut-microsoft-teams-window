@@ -5,9 +5,6 @@ from PIL import Image
 import time
 import re
 
-# Tesseract path (solo si no está en PATH)
-# pytesseract.pytesseract.tesseract_cmd = r"/usr/bin/tesseract"
-
 def find_teams_window():
     result = subprocess.run(["wmctrl", "-l"], stdout=subprocess.PIPE, text=True)
     for line in result.stdout.splitlines():
@@ -18,13 +15,11 @@ def find_teams_window():
 
 def screenshot_participant_section(output_path="participants.png"):
     with mss.mss() as sct:
-        screen = sct.monitors[1]  # pantalla principal
-
         region = {
-            "left": screen["width"] - 350,  # lado derecho
-            "top": 100,                     # un poco debajo de la barra superior
-            "width": 300,
-            "height": 300                  # suficiente para capturar "En esta reunión"
+            "left": 1130,  # lado derecho
+            "top": 250,                     # debajo barra superior
+            "width": 100,
+            "height": 50                  # suficiente para capturar "En esta reunión"
         }
 
         img = sct.grab(region)
@@ -37,7 +32,7 @@ def get_participant_count_from_screenshot(image_path):
     print("\n📝 Texto detectado por OCR:\n", text)
 
     # Buscar texto con formato "En esta reunión (X)"
-    match = re.search(r"En esta reu(?:nión|nien|ni[eé]n)\s*\((\d+)\)", text, re.IGNORECASE)
+    match = re.search(r"reu(?:nión|nion|nien|ni[eé]n)\s*\((\d+)\)", text, re.IGNORECASE)
     if match:
         count = int(match.group(1))
         print(f"👥 Participantes detectados: {count}")
@@ -73,7 +68,7 @@ def main():
         else:
             print("🔍 No se detectó ninguna ventana de Teams.")
 
-        time.sleep(15)
+        time.sleep(5)
 
 if __name__ == "__main__":
     main()

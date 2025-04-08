@@ -1,0 +1,4 @@
+mss
+pytesseract
+Pillow
+pyautogui
